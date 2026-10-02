@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS collections (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  banglaName TEXT,
+  category TEXT DEFAULT 'Bangles & Jewelry',
+  price TEXT NOT NULL,
+  description TEXT,
+  image TEXT NOT NULL,
+  images TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
