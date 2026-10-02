@@ -199,6 +199,7 @@ interface LanguageContextType {
   toggleLanguage: () => void;
   t: (path: string) => string;
   formatPrice: (price: string | number) => string;
+  toBengaliNumber: (str: string | number) => string;
   translateCategory: (category: string) => string;
   translateProduct: (product: Product) => Product;
   getWhatsappOrderUrl: (productName: string, priceStr: string) => string;
@@ -301,6 +302,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         toggleLanguage,
         t,
         formatPrice,
+        toBengaliNumber,
         translateCategory,
         translateProduct,
         getWhatsappOrderUrl,

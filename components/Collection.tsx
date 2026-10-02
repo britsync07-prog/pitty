@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ChevronUp, ChevronDown, Filter, X, RotateCcw } from 'lucide-react';
 import { PRODUCTS, CATEGORIES } from '../constants';
 import { Product } from '../types';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage, toBengaliNumber } from '../context/LanguageContext';
 
 const FILTER_CATEGORIES = CATEGORIES.filter(c => c !== 'All');
 

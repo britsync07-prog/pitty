@@ -72,9 +72,17 @@ const ProductDetail = ({ id }: { id: string }) => {
     </div>
   );
 
-  if (!product) return <div className="p-20 text-center font-serif text-xl">Product not found</div>;
+  if (!product || !currentProduct) return (
+    <div className="min-h-screen bg-white">
+      <Navbar />
+      <div className="pt-40 pb-20 text-center font-serif text-xl text-zinc-600">
+        {language === 'bn' ? 'পণ্যটি খুঁজে পাওয়া যায়নি' : 'Product not found'}
+      </div>
+      <Footer />
+    </div>
+  );
 
-  const priceStr = product.price.includes('৳') ? product.price : `৳${product.price}`;
+  const priceStr = currentProduct.price;
 
   return (
     <div className="min-h-screen bg-white">
