@@ -72,7 +72,7 @@ const Collection = () => {
     setSortBy('featured');
   };
 
-  const hasActiveFilters = selectedCategories.length > 0 || maxPrice < 1500 || sortBy !== 'featured';
+  const hasActiveFilters = selectedCategories.length > 0 || maxPrice < 1500;
 
   // Filter & Sort Logic
   const filteredProducts = useMemo(() => {
@@ -108,14 +108,14 @@ const Collection = () => {
 
   if (loading) {
     return (
-      <section className="py-32 text-center">
+      <section className="py-24 sm:py-32 text-center">
         <div className="animate-pulse font-serif text-xl text-zinc-400">Loading Collection...</div>
       </section>
     );
   }
 
-  // Sidebar Filter Component (matching screenshot design)
-  const FilterSidebar = () => (
+  // Sidebar Filter Component
+  const FilterSidebar = ({ isMobile = false }: { isMobile?: boolean }) => (
     <div className="w-full">
       {/* Title */}
       <div className="flex items-center justify-between pb-4 border-b border-zinc-200 mb-6">
@@ -171,7 +171,7 @@ const Collection = () => {
       </div>
 
       {/* 2. Price Range Bar Section */}
-      <div className="border-b border-zinc-100 pb-6 mb-6">
+      <div className={`${isMobile ? '' : 'border-b border-zinc-100'} pb-6 mb-6`}>
         <button
           onClick={() => toggleSection('price')}
           className="w-full flex items-center justify-between text-left group"
@@ -218,87 +218,106 @@ const Collection = () => {
         )}
       </div>
 
-      {/* 3. Sort By Section */}
-      <div className="border-b border-zinc-100 pb-6 mb-6">
-        <button
-          onClick={() => toggleSection('sort')}
-          className="w-full flex items-center justify-between text-left group"
-        >
-          <span className="text-xs font-semibold tracking-widest text-zinc-900 uppercase">
-            Sort By
-          </span>
-          <span className="text-zinc-500 group-hover:text-black transition-colors">
-            {openSections.sort ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </span>
-        </button>
+      {/* 3. Sort By Section (Visible on Desktop Sidebar) */}
+      {!isMobile && (
+        <div className="border-b border-zinc-100 pb-6 mb-6">
+          <button
+            onClick={() => toggleSection('sort')}
+            className="w-full flex items-center justify-between text-left group"
+          >
+            <span className="text-xs font-semibold tracking-widest text-zinc-900 uppercase">
+              Sort By
+            </span>
+            <span className="text-zinc-500 group-hover:text-black transition-colors">
+              {openSections.sort ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </span>
+          </button>
 
-        {openSections.sort && (
-          <div className="mt-4 space-y-3">
-            {[
-              { id: 'featured', label: 'Featured' },
-              { id: 'low-to-high', label: 'Price: Low to High' },
-              { id: 'high-to-low', label: 'Price: High to Low' },
-            ].map(opt => {
-              const isSelected = sortBy === opt.id;
-              return (
-                <label 
-                  key={opt.id} 
-                  className="flex items-center gap-3 cursor-pointer group"
-                >
-                  <input
-                    type="radio"
-                    name="sortOrder"
-                    checked={isSelected}
-                    onChange={() => setSortBy(opt.id as any)}
-                    className="w-4 h-4 border-zinc-300 text-black focus:ring-0 cursor-pointer accent-black"
-                  />
-                  <span className={`text-sm tracking-wide transition-colors ${isSelected ? 'text-black font-medium' : 'text-zinc-600 group-hover:text-black'}`}>
-                    {opt.label}
-                  </span>
-                </label>
-              );
-            })}
-          </div>
-        )}
-      </div>
+          {openSections.sort && (
+            <div className="mt-4 space-y-3">
+              {[
+                { id: 'featured', label: 'Featured / Newest' },
+                { id: 'low-to-high', label: 'Price: Low to High' },
+                { id: 'high-to-low', label: 'Price: High to Low' },
+              ].map(opt => {
+                const isSelected = sortBy === opt.id;
+                return (
+                  <label 
+                    key={opt.id} 
+                    className="flex items-center gap-3 cursor-pointer group"
+                  >
+                    <input
+                      type="radio"
+                      name="desktopSortOrder"
+                      checked={isSelected}
+                      onChange={() => setSortBy(opt.id as any)}
+                      className="w-4 h-4 border-zinc-300 text-black focus:ring-0 cursor-pointer accent-black"
+                    />
+                    <span className={`text-sm tracking-wide transition-colors ${isSelected ? 'text-black font-medium' : 'text-zinc-600 group-hover:text-black'}`}>
+                      {opt.label}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 
   return (
-    <section id="collection" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="collection" className="py-12 sm:py-24 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Section Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8 }}
-        className="text-center mb-16"
+        className="text-center mb-10 sm:mb-16"
       >
-        <h2 className="text-4xl md:text-5xl font-serif mb-4 text-zinc-900">Latest Collection</h2>
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif mb-3 text-zinc-900">Latest Collection</h2>
         <div className="w-16 h-[1px] bg-zinc-300 mx-auto"></div>
       </motion.div>
 
-      {/* Mobile Filter Button */}
-      <div className="lg:hidden mb-8 flex items-center justify-between">
-        <button
-          onClick={() => setIsMobileFilterOpen(true)}
-          className="flex items-center gap-2 px-5 py-2.5 border border-zinc-300 text-sm tracking-wider uppercase text-zinc-900 hover:border-black transition-colors"
-        >
-          <Filter size={16} />
-          <span>Filters {hasActiveFilters && `(${selectedCategories.length + (maxPrice < 1500 ? 1 : 0) + (sortBy !== 'featured' ? 1 : 0)})`}</span>
-        </button>
+      {/* Mobile Filter & Sort Controls (Matching Screenshot 2026-10-03 003829.png) */}
+      <div className="lg:hidden mb-6 space-y-3">
+        {/* Row 1: Filters button + Product Count */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setIsMobileFilterOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 border border-zinc-200 text-sm text-zinc-900 bg-white hover:border-black transition-colors"
+          >
+            <Filter size={15} className="text-zinc-800" />
+            <span>Filters {hasActiveFilters ? `(${selectedCategories.length + (maxPrice < 1500 ? 1 : 0)})` : ''}</span>
+          </button>
 
-        <span className="text-xs text-zinc-500 uppercase tracking-widest">
-          {filteredProducts.length} Products
-        </span>
+          <span className="text-sm text-zinc-600 font-normal">
+            {filteredProducts.length} Products
+          </span>
+        </div>
+
+        {/* Row 2: Sort By Dropdown (Directly under Filters button) */}
+        <div className="relative inline-block">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as any)}
+            className="appearance-none bg-white border border-zinc-200 px-4 py-2 pr-9 text-sm text-zinc-800 rounded-none focus:outline-none focus:border-black cursor-pointer font-normal"
+          >
+            <option value="featured">Sort by: Newest</option>
+            <option value="low-to-high">Sort by: Price: Low to High</option>
+            <option value="high-to-low">Sort by: Price: High to Low</option>
+          </select>
+          <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-700" />
+        </div>
       </div>
 
-      {/* Main Two-Column Layout (Left: Filters, Right: Product Grid) */}
-      <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
+      {/* Main Two-Column Layout (Left: Filters on Desktop, Right: Product Grid) */}
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
         
         {/* Desktop Left-Side Filter Sidebar */}
         <aside className="hidden lg:block w-64 xl:w-72 flex-shrink-0 sticky top-28">
-          <FilterSidebar />
+          <FilterSidebar isMobile={false} />
         </aside>
 
         {/* Right Side: Products Grid */}
@@ -339,9 +358,9 @@ const Collection = () => {
 
           {/* Empty State */}
           {filteredProducts.length === 0 ? (
-            <div className="py-24 text-center border border-dashed border-zinc-200">
-              <p className="font-serif text-xl text-zinc-700 mb-2">No products match your filters</p>
-              <p className="text-sm text-zinc-400 mb-6 font-light">Try adjusting the price range or category selections.</p>
+            <div className="py-20 text-center border border-dashed border-zinc-200">
+              <p className="font-serif text-lg text-zinc-700 mb-2">No products match your filters</p>
+              <p className="text-xs sm:text-sm text-zinc-400 mb-6 font-light">Try adjusting the price range or category selections.</p>
               <button
                 onClick={clearAllFilters}
                 className="px-6 py-2.5 bg-black text-white text-xs uppercase tracking-widest hover:bg-zinc-800 transition-colors"
@@ -350,20 +369,20 @@ const Collection = () => {
               </button>
             </div>
           ) : (
-            /* Product Grid */
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-10">
+            /* Product Grid: Exactly 2 products per row on phone (grid-cols-2), 3 on desktop */
+            <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6 md:gap-8">
               {filteredProducts.map((product, index) => (
                 <motion.div
                   key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 15 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.5, delay: (index % 3) * 0.08 }}
-                  className="group cursor-pointer"
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.4, delay: (index % 4) * 0.05 }}
+                  className="group cursor-pointer flex flex-col"
                   onClick={() => navigateToProduct(product.id)}
                 >
                   {/* Image Card with Original View Button */}
-                  <div className="relative aspect-[3/4] overflow-hidden bg-zinc-100 mb-5">
+                  <div className="relative aspect-[3/4] overflow-hidden bg-zinc-100 mb-2.5 sm:mb-4">
                     <img 
                       src={product.image} 
                       alt={product.name}
@@ -371,18 +390,18 @@ const Collection = () => {
                       className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500 flex items-center justify-center">
-                      <span className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 text-white tracking-widest uppercase text-sm border border-white px-6 py-3 font-medium">
+                      <span className="opacity-0 group-hover:opacity-100 transform translate-y-3 group-hover:translate-y-0 transition-all duration-500 text-white tracking-widest uppercase text-xs sm:text-sm border border-white px-3 sm:px-6 py-1.5 sm:py-3 font-medium">
                         View
                       </span>
                     </div>
                   </div>
 
-                  {/* Card Title & Price */}
-                  <div className="flex justify-between items-start px-1 gap-3">
-                    <h3 className="font-serif text-base md:text-lg text-zinc-900 group-hover:text-black transition-colors leading-snug">
+                  {/* Card Title & Price (Optimized for Mobile) */}
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start px-0.5 sm:px-1 gap-1 sm:gap-3">
+                    <h3 className="font-serif text-xs sm:text-base md:text-lg text-zinc-900 group-hover:text-black transition-colors leading-tight line-clamp-2 sm:line-clamp-1">
                       {product.name}
                     </h3>
-                    <p className="text-zinc-600 text-sm font-medium whitespace-nowrap">
+                    <p className="text-zinc-600 text-xs sm:text-sm font-medium whitespace-nowrap">
                       {product.price.includes('৳') ? product.price : `৳${product.price}`}
                     </p>
                   </div>
@@ -393,7 +412,7 @@ const Collection = () => {
         </main>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer (Categories and Price Range) */}
       <AnimatePresence>
         {isMobileFilterOpen && (
           <>
@@ -409,19 +428,21 @@ const Collection = () => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'tween', duration: 0.3 }}
-              className="fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 p-6 overflow-y-auto shadow-2xl lg:hidden"
+              className="fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 p-6 overflow-y-auto shadow-2xl lg:hidden flex flex-col justify-between"
             >
-              <div className="flex justify-between items-center mb-6 pb-4 border-b border-zinc-200">
-                <span className="font-serif text-xl text-zinc-900">Filters</span>
-                <button 
-                  onClick={() => setIsMobileFilterOpen(false)}
-                  className="p-1 text-zinc-500 hover:text-black"
-                >
-                  <X size={20} />
-                </button>
-              </div>
+              <div>
+                <div className="flex justify-between items-center mb-6 pb-4 border-b border-zinc-200">
+                  <span className="font-serif text-xl text-zinc-900">Filters</span>
+                  <button 
+                    onClick={() => setIsMobileFilterOpen(false)}
+                    className="p-1 text-zinc-500 hover:text-black"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
 
-              <FilterSidebar />
+                <FilterSidebar isMobile={true} />
+              </div>
 
               <div className="mt-8 pt-4 border-t border-zinc-200">
                 <button
