@@ -49,3 +49,16 @@ export const WhatsAppIcon = ({ size = 20, className = '' }: { size?: number; cla
     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
   </svg>
 );
+
+export const MessengerIcon = ({ size = 20, className = '' }: { size?: number; className?: string }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M12 2C6.48 2 2 6.13 2 11.23c0 2.91 1.45 5.52 3.73 7.2V22l3.42-1.88c.9.25 1.86.39 2.85.39 5.52 0 10-4.13 10-9.28C22 6.13 17.52 2 12 2zm1.06 12.43l-2.55-2.72-4.97 2.72 5.47-5.81 2.61 2.72 4.91-2.72-5.47 5.81z" />
+  </svg>
+);
+

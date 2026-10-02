@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react';
+import { WhatsAppIcon, MessengerIcon } from './Icons';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import { PRODUCTS } from '../constants';
@@ -141,15 +142,24 @@ const ProductDetail = ({ id }: { id: string }) => {
                 </p>
               </div>
 
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3">
                 <a 
                   href={`https://wa.me/8801314671743?text=${encodeURIComponent(`Hi Pretty Pocket! 🌸\nI would like to order: ${product.name} (${priceStr}).\nPlease share delivery details.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full bg-black text-white py-5 px-8 flex items-center justify-center gap-3 hover:bg-zinc-800 transition-colors tracking-widest uppercase text-sm font-medium"
+                  className="w-full bg-black text-white py-4 px-8 flex items-center justify-center gap-3 hover:bg-zinc-800 transition-colors tracking-widest uppercase text-xs sm:text-sm font-medium shadow-sm"
                 >
-                  <ShoppingBag size={18} />
+                  <WhatsAppIcon size={18} />
                   Order via WhatsApp
+                </a>
+                <a 
+                  href="https://m.me/61591337513485"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full border border-black text-black bg-white py-4 px-8 flex items-center justify-center gap-3 hover:bg-black hover:text-white transition-colors tracking-widest uppercase text-xs sm:text-sm font-medium"
+                >
+                  <MessengerIcon size={18} />
+                  Order via Messenger
                 </a>
               </div>
 
