@@ -1,11 +1,13 @@
-name = "ray-arein"
+name = "pretty-pocket"
 pages_build_output_dir = "dist"
+compatibility_date = "2024-09-23"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "ray-arein-db"
-database_id = "d36805ec-bb01-4e40-a60d-2d2009ab5a2b"
+database_name = "pretty-pocket-db"
+database_id = "ec1ef848-5bbf-4ec2-a96e-96119581add9"
 
 [[r2_buckets]]
-binding = 'BUCKET'
-bucket_name = 'ray-arein-assets'
+binding = "BUCKET"
+bucket_name = "pretty-pocket-assets"
+
