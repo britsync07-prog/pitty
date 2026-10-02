@@ -11,6 +11,18 @@ const ProductDetail = ({ id }: { id: string }) => {
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState('');
   const [images, setImages] = useState<string[]>([]);
+  const [copiedMessenger, setCopiedMessenger] = useState(false);
+
+  const handleMessengerOrder = () => {
+    if (!product) return;
+    const price = product.price ? (String(product.price).includes('৳') ? product.price : `৳${product.price}`) : '';
+    const text = `Hi Pretty Pocket! 🌸\nI would like to order: ${product.name} (${price}).\nPlease share delivery details.`;
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(text);
+      setCopiedMessenger(true);
+      setTimeout(() => setCopiedMessenger(false), 5000);
+    }
+  };
 
   useEffect(() => {
     fetch(`/api/collections?id=${id}`)
@@ -156,11 +168,17 @@ const ProductDetail = ({ id }: { id: string }) => {
                   href="https://m.me/61591337513485"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={handleMessengerOrder}
                   className="w-full border border-black text-black bg-white py-4 px-8 flex items-center justify-center gap-3 hover:bg-black hover:text-white transition-colors tracking-widest uppercase text-xs sm:text-sm font-medium"
                 >
                   <MessengerIcon size={18} />
-                  Order via Messenger
+                  {copiedMessenger ? "Order Text Copied! Opening..." : "Order via Messenger"}
                 </a>
+                {copiedMessenger && (
+                  <p className="text-[11px] text-center text-zinc-500 tracking-wider font-light mt-1">
+                    Order message copied to clipboard. Just paste and send in Messenger!
+                  </p>
+                )}
               </div>
 
               <div className="mt-16 grid grid-cols-2 gap-8 border-t border-zinc-100 pt-8">
