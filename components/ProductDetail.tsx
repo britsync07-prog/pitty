@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
-import { ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ChevronLeft, ChevronRight, ShoppingBag, Check, Copy, X } from 'lucide-react';
 import { WhatsAppIcon, MessengerIcon } from './Icons';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -11,17 +11,21 @@ const ProductDetail = ({ id }: { id: string }) => {
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState('');
   const [images, setImages] = useState<string[]>([]);
-  const [copiedMessenger, setCopiedMessenger] = useState(false);
+  const [showMessengerModal, setShowMessengerModal] = useState(false);
+  const [copiedAgain, setCopiedAgain] = useState(false);
 
-  const handleMessengerOrder = () => {
-    if (!product) return;
+  const getOrderText = () => {
+    if (!product) return '';
     const price = product.price ? (String(product.price).includes('৳') ? product.price : `৳${product.price}`) : '';
-    const text = `Hi Pretty Pocket! 🌸\nI would like to order: ${product.name} (${price}).\nPlease share delivery details.`;
+    return `Hi Pretty Pocket! 🌸\nI would like to order: ${product.name} (${price}).\nPlease share delivery details.`;
+  };
+
+  const handleMessengerClick = () => {
+    const text = getOrderText();
     if (navigator?.clipboard?.writeText) {
       navigator.clipboard.writeText(text);
-      setCopiedMessenger(true);
-      setTimeout(() => setCopiedMessenger(false), 5000);
     }
+    setShowMessengerModal(true);
   };
 
   useEffect(() => {
@@ -164,21 +168,14 @@ const ProductDetail = ({ id }: { id: string }) => {
                   <WhatsAppIcon size={18} />
                   Order via WhatsApp
                 </a>
-                <a 
-                  href="https://m.me/61591337513485"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={handleMessengerOrder}
+                <button 
+                  type="button"
+                  onClick={handleMessengerClick}
                   className="w-full border border-black text-black bg-white py-4 px-8 flex items-center justify-center gap-3 hover:bg-black hover:text-white transition-colors tracking-widest uppercase text-xs sm:text-sm font-medium"
                 >
                   <MessengerIcon size={18} />
-                  {copiedMessenger ? "Order Text Copied! Opening..." : "Order via Messenger"}
-                </a>
-                {copiedMessenger && (
-                  <p className="text-[11px] text-center text-zinc-500 tracking-wider font-light mt-1">
-                    Order message copied to clipboard. Just paste and send in Messenger!
-                  </p>
-                )}
+                  Order via Messenger
+                </button>
               </div>
 
               <div className="mt-16 grid grid-cols-2 gap-8 border-t border-zinc-100 pt-8">
@@ -196,6 +193,67 @@ const ProductDetail = ({ id }: { id: string }) => {
         </div>
       </main>
       <Footer />
+
+      {/* Messenger Order Guidance Modal */}
+      <AnimatePresence>
+        {showMessengerModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white max-w-md w-full p-6 sm:p-8 relative shadow-2xl border border-zinc-100"
+            >
+              <button 
+                onClick={() => setShowMessengerModal(false)}
+                className="absolute top-4 right-4 text-zinc-400 hover:text-black p-1 transition-colors"
+                aria-label="Close"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="w-12 h-12 rounded-full bg-zinc-100 text-zinc-900 flex items-center justify-center mx-auto mb-4">
+                <Check size={24} />
+              </div>
+
+              <h3 className="text-xl font-serif text-center text-zinc-900 mb-2">Order Text Copied!</h3>
+              <p className="text-xs text-zinc-500 text-center mb-5 font-light leading-relaxed">
+                We've copied your order details. Once Messenger opens, simply <strong>Paste</strong> into the chat and send.
+              </p>
+
+              <div className="bg-zinc-50 border border-zinc-200 p-4 mb-5 text-xs text-zinc-700 whitespace-pre-wrap font-sans leading-relaxed select-all">
+                {getOrderText()}
+              </div>
+
+              <div className="flex flex-col gap-2.5">
+                <a 
+                  href="https://m.me/61591337513485"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setShowMessengerModal(false)}
+                  className="w-full bg-black text-white py-4 px-6 flex items-center justify-center gap-2 hover:bg-zinc-800 transition-colors uppercase tracking-widest text-xs font-semibold text-center"
+                >
+                  <MessengerIcon size={18} />
+                  Open Messenger Now
+                </a>
+
+                <button 
+                  type="button"
+                  onClick={() => {
+                    navigator?.clipboard?.writeText(getOrderText());
+                    setCopiedAgain(true);
+                    setTimeout(() => setCopiedAgain(false), 2000);
+                  }}
+                  className="w-full py-2.5 text-center text-xs text-zinc-500 hover:text-black tracking-wider uppercase font-medium flex items-center justify-center gap-1.5 transition-colors"
+                >
+                  <Copy size={13} />
+                  {copiedAgain ? "Copied Again!" : "Copy Text Again"}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
