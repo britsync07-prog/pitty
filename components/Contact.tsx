@@ -1,8 +1,11 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Mail, Phone } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const Contact = () => {
+  const { t } = useLanguage();
+
   return (
     <section id="contact" className="py-24 px-4 bg-zinc-50 border-t border-zinc-200">
       <div className="max-w-3xl mx-auto text-center">
@@ -12,9 +15,9 @@ const Contact = () => {
            viewport={{ once: true, margin: "-100px" }}
            transition={{ duration: 0.8 }}
         >
-          <h2 className="text-3xl md:text-4xl font-serif mb-6 text-zinc-900">Get in Touch</h2>
+          <h2 className="text-3xl md:text-4xl font-serif mb-6 text-zinc-900">{t('contact.title')}</h2>
           <p className="text-zinc-500 mb-12 font-light">
-            We are here to assist you with inquiries, orders, and custom combo requests.
+            {t('contact.subtitle')}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center">

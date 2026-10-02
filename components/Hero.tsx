@@ -1,7 +1,9 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
+import { useLanguage } from '../context/LanguageContext';
 
 const Hero = () => {
+  const { t } = useLanguage();
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -69,7 +71,7 @@ const Hero = () => {
           transition={{ duration: 1, delay: 0.6 }}
           className="text-xs sm:text-base md:text-xl text-zinc-100 font-light tracking-widest uppercase mb-8 sm:mb-12 drop-shadow px-2"
         >
-          Your daily dose of glam, without breaking the bank
+          {t('hero.tagline')}
         </motion.p>
 
         <motion.button
@@ -77,9 +79,9 @@ const Hero = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.9 }}
           onClick={scrollToCollection}
-          className="group relative px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-black text-xs sm:text-sm tracking-[0.2em] uppercase overflow-hidden hover:text-white transition-colors duration-500 shadow-xl"
+          className="group relative px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-black text-xs sm:text-sm tracking-[0.2em] uppercase overflow-hidden hover:text-white transition-colors duration-500 shadow-xl font-medium"
         >
-          <span className="relative z-10">View Collection</span>
+          <span className="relative z-10">{t('hero.viewCollection')}</span>
           <div className="absolute inset-0 bg-black translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-in-out"></div>
         </motion.button>
       </div>

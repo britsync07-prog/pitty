@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,10 +38,10 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { name: 'Collection', id: 'collection' },
-    { name: 'Featured', id: 'featured' },
-    { name: 'About', id: 'about' },
-    { name: 'Contact', id: 'contact' },
+    { name: t('nav.collection'), id: 'collection' },
+    { name: t('nav.featured'), id: 'featured' },
+    { name: t('nav.about'), id: 'about' },
+    { name: t('nav.contact'), id: 'contact' },
   ];
 
   return (
@@ -62,28 +64,79 @@ const Navbar = () => {
           <span>Pretty Pocket</span>
         </div>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex gap-8">
-          {navLinks.map((link) => (
-            <button
-              key={link.id}
-              onClick={() => scrollTo(link.id)}
-              className="text-sm font-medium tracking-widest uppercase text-zinc-800 hover:text-black transition-colors relative group"
-            >
-              {link.name}
-              <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-black transition-all duration-300 group-hover:w-full"></span>
-            </button>
-          ))}
-        </nav>
+        {/* Desktop Nav & Language */}
+        <div className="hidden md:flex items-center gap-8">
+          <nav className="flex gap-8">
+            {navLinks.map((link) => (
+              <button
+                key={link.id}
+                onClick={() => scrollTo(link.id)}
+                className="text-sm font-medium tracking-widest uppercase text-zinc-800 hover:text-black transition-colors relative group"
+              >
+                {link.name}
+                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-black transition-all duration-300 group-hover:w-full"></span>
+              </button>
+            ))}
+          </nav>
 
-        {/* Mobile Menu Toggle */}
-        <button 
-          className="md:hidden text-zinc-900"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+          {/* Language Switcher */}
+          <div className="flex items-center bg-zinc-100 p-0.5 rounded-full border border-zinc-200">
+            <button
+              onClick={() => setLanguage('en')}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                language === 'en'
+                  ? 'bg-black text-white shadow-sm'
+                  : 'text-zinc-600 hover:text-black'
+              }`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => setLanguage('bn')}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                language === 'bn'
+                  ? 'bg-black text-white shadow-sm'
+                  : 'text-zinc-600 hover:text-black'
+              }`}
+            >
+              বাংলা
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Header Controls: Language Toggle + Menu */}
+        <div className="md:hidden flex items-center gap-2.5">
+          <div className="flex items-center bg-zinc-100 p-0.5 rounded-full border border-zinc-200">
+            <button
+              onClick={() => setLanguage('en')}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all ${
+                language === 'en'
+                  ? 'bg-black text-white'
+                  : 'text-zinc-600'
+              }`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => setLanguage('bn')}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all ${
+                language === 'bn'
+                  ? 'bg-black text-white'
+                  : 'text-zinc-600'
+              }`}
+            >
+              বাং
+            </button>
+          </div>
+
+          <button 
+            className="text-zinc-900 p-1"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Nav */}

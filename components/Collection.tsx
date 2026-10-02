@@ -3,10 +3,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ChevronUp, ChevronDown, Filter, X, RotateCcw } from 'lucide-react';
 import { PRODUCTS, CATEGORIES } from '../constants';
 import { Product } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 const FILTER_CATEGORIES = CATEGORIES.filter(c => c !== 'All');
 
 const Collection = () => {
+  const { language, t, formatPrice, translateCategory, translateProduct } = useLanguage();
   const [dbProducts, setDbProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -119,14 +121,14 @@ const Collection = () => {
     <div className="w-full">
       {/* Title */}
       <div className="flex items-center justify-between pb-4 border-b border-zinc-200 mb-6">
-        <h3 className="font-serif text-2xl text-zinc-900 tracking-wide">Filters</h3>
+        <h3 className="font-serif text-2xl text-zinc-900 tracking-wide">{t('collection.filters')}</h3>
         {hasActiveFilters && (
           <button 
             onClick={clearAllFilters}
             className="text-xs uppercase tracking-wider text-zinc-500 hover:text-black flex items-center gap-1 transition-colors"
           >
             <RotateCcw size={12} />
-            <span>Reset</span>
+            <span>{t('collection.reset')}</span>
           </button>
         )}
       </div>
@@ -138,7 +140,7 @@ const Collection = () => {
           className="w-full flex items-center justify-between text-left group"
         >
           <span className="text-xs font-semibold tracking-widest text-zinc-900 uppercase">
-            Category
+            {t('collection.categories')}
           </span>
           <span className="text-zinc-500 group-hover:text-black transition-colors">
             {openSections.category ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -161,7 +163,7 @@ const Collection = () => {
                     className="w-4 h-4 rounded-none border-zinc-300 text-black focus:ring-0 cursor-pointer accent-black"
                   />
                   <span className={`text-sm tracking-wide transition-colors ${isChecked ? 'text-black font-medium' : 'text-zinc-600 group-hover:text-black'}`}>
-                    {cat}
+                    {translateCategory(cat)}
                   </span>
                 </label>
               );
@@ -177,7 +179,7 @@ const Collection = () => {
           className="w-full flex items-center justify-between text-left group"
         >
           <span className="text-xs font-semibold tracking-widest text-zinc-900 uppercase">
-            Price Range
+            {t('collection.priceRange')}
           </span>
           <span className="text-zinc-500 group-hover:text-black transition-colors">
             {openSections.price ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -187,9 +189,11 @@ const Collection = () => {
         {openSections.price && (
           <div className="mt-4 space-y-4">
             <div className="flex items-center justify-between text-xs text-zinc-600 font-medium">
-              <span>৳50</span>
-              <span className="text-black font-semibold bg-zinc-100 px-2 py-1">Up to ৳{maxPrice}</span>
-              <span>৳1500</span>
+              <span>{formatPrice(50)}</span>
+              <span className="text-black font-semibold bg-zinc-100 px-2 py-1">
+                {language === 'bn' ? `সর্বোচ্চ ${formatPrice(maxPrice)}` : `Up to ৳${maxPrice}`}
+              </span>
+              <span>{formatPrice(1500)}</span>
             </div>
             <input
               type="range"
@@ -210,7 +214,7 @@ const Collection = () => {
                     maxPrice === preset ? 'border-black bg-black text-white' : 'border-zinc-200 text-zinc-600 hover:border-black'
                   }`}
                 >
-                  Under ৳{preset}
+                  {language === 'bn' ? `${formatPrice(preset)} এর মধ্যে` : `Under ৳${preset}`}
                 </button>
               ))}
             </div>
@@ -226,7 +230,7 @@ const Collection = () => {
             className="w-full flex items-center justify-between text-left group"
           >
             <span className="text-xs font-semibold tracking-widest text-zinc-900 uppercase">
-              Sort By
+              {t('collection.sortBy')}
             </span>
             <span className="text-zinc-500 group-hover:text-black transition-colors">
               {openSections.sort ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -236,9 +240,9 @@ const Collection = () => {
           {openSections.sort && (
             <div className="mt-4 space-y-3">
               {[
-                { id: 'featured', label: 'Featured / Newest' },
-                { id: 'low-to-high', label: 'Price: Low to High' },
-                { id: 'high-to-low', label: 'Price: High to Low' },
+                { id: 'featured', label: t('collection.featuredSort') },
+                { id: 'low-to-high', label: t('collection.lowToHigh') },
+                { id: 'high-to-low', label: t('collection.highToLow') },
               ].map(opt => {
                 const isSelected = sortBy === opt.id;
                 return (
@@ -276,7 +280,7 @@ const Collection = () => {
         transition={{ duration: 0.8 }}
         className="text-center mb-10 sm:mb-16"
       >
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif mb-3 text-zinc-900">Latest Collection</h2>
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif mb-3 text-zinc-900">{t('collection.title')}</h2>
         <div className="w-16 h-[1px] bg-zinc-300 mx-auto"></div>
       </motion.div>
 
@@ -289,11 +293,11 @@ const Collection = () => {
             className="flex items-center gap-2 px-4 py-2 border border-zinc-200 text-sm text-zinc-900 bg-white hover:border-black transition-colors"
           >
             <Filter size={15} className="text-zinc-800" />
-            <span>Filters {hasActiveFilters ? `(${selectedCategories.length + (maxPrice < 1500 ? 1 : 0)})` : ''}</span>
+            <span>{t('collection.filters')} {hasActiveFilters ? `(${selectedCategories.length + (maxPrice < 1500 ? 1 : 0)})` : ''}</span>
           </button>
 
           <span className="text-sm text-zinc-600 font-normal">
-            {filteredProducts.length} Products
+            {language === 'bn' ? `${toBengaliNumber(filteredProducts.length)} টি পণ্য` : `${filteredProducts.length} Products`}
           </span>
         </div>
 
@@ -304,9 +308,9 @@ const Collection = () => {
             onChange={(e) => setSortBy(e.target.value as any)}
             className="appearance-none bg-white border border-zinc-200 px-4 py-2 pr-9 text-sm text-zinc-800 rounded-none focus:outline-none focus:border-black cursor-pointer font-normal"
           >
-            <option value="featured">Sort by: Newest</option>
-            <option value="low-to-high">Sort by: Price: Low to High</option>
-            <option value="high-to-low">Sort by: Price: High to Low</option>
+            <option value="featured">{language === 'bn' ? 'সাজান: নতুন / জনপ্রিয়' : 'Sort by: Newest'}</option>
+            <option value="low-to-high">{language === 'bn' ? 'সাজান: মূল্য (কম থেকে বেশি)' : 'Sort by: Price: Low to High'}</option>
+            <option value="high-to-low">{language === 'bn' ? 'সাজান: মূল্য (বেশি থেকে কম)' : 'Sort by: Price: High to Low'}</option>
           </select>
           <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-700" />
         </div>
@@ -325,14 +329,16 @@ const Collection = () => {
           {/* Top Bar for Desktop */}
           <div className="hidden lg:flex items-center justify-between mb-8 pb-4 border-b border-zinc-100">
             <span className="text-xs text-zinc-500 uppercase tracking-widest font-light">
-              Showing {filteredProducts.length} of {allProducts.length} products
+              {language === 'bn' 
+                ? `মোট ${toBengaliNumber(allProducts.length)} টির মধ্যে ${toBengaliNumber(filteredProducts.length)} টি পণ্য প্রদর্শিত` 
+                : `Showing ${filteredProducts.length} of ${allProducts.length} products`}
             </span>
             {hasActiveFilters && (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-zinc-400">Active filters:</span>
+                <span className="text-xs text-zinc-400">{language === 'bn' ? 'সক্রিয় ফিল্টার:' : 'Active filters:'}</span>
                 {selectedCategories.map(c => (
                   <span key={c} className="text-xs bg-zinc-100 text-zinc-800 px-2.5 py-1 flex items-center gap-1.5">
-                    {c}
+                    {translateCategory(c)}
                     <button onClick={() => handleCategoryToggle(c)} className="hover:text-black">
                       <X size={12} />
                     </button>
@@ -340,7 +346,7 @@ const Collection = () => {
                 ))}
                 {maxPrice < 1500 && (
                   <span className="text-xs bg-zinc-100 text-zinc-800 px-2.5 py-1 flex items-center gap-1.5">
-                    ≤ ৳{maxPrice}
+                    ≤ {formatPrice(maxPrice)}
                     <button onClick={() => setMaxPrice(1500)} className="hover:text-black">
                       <X size={12} />
                     </button>
@@ -350,7 +356,7 @@ const Collection = () => {
                   onClick={clearAllFilters}
                   className="text-xs text-zinc-500 hover:text-black underline ml-2"
                 >
-                  Clear all
+                  {t('collection.clearAll')}
                 </button>
               </div>
             )}
@@ -359,54 +365,56 @@ const Collection = () => {
           {/* Empty State */}
           {filteredProducts.length === 0 ? (
             <div className="py-20 text-center border border-dashed border-zinc-200">
-              <p className="font-serif text-lg text-zinc-700 mb-2">No products match your filters</p>
-              <p className="text-xs sm:text-sm text-zinc-400 mb-6 font-light">Try adjusting the price range or category selections.</p>
+              <p className="font-serif text-lg text-zinc-700 mb-2">{t('collection.noProducts')}</p>
               <button
                 onClick={clearAllFilters}
                 className="px-6 py-2.5 bg-black text-white text-xs uppercase tracking-widest hover:bg-zinc-800 transition-colors"
               >
-                Reset Filters
+                {t('collection.resetFilters')}
               </button>
             </div>
           ) : (
             /* Product Grid: Exactly 2 products per row on phone (grid-cols-2), 3 on desktop */
             <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6 md:gap-8">
-              {filteredProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-40px" }}
-                  transition={{ duration: 0.4, delay: (index % 4) * 0.05 }}
-                  className="group cursor-pointer flex flex-col"
-                  onClick={() => navigateToProduct(product.id)}
-                >
-                  {/* Image Card with Original View Button */}
-                  <div className="relative aspect-[3/4] overflow-hidden bg-zinc-100 mb-2.5 sm:mb-4">
-                    <img 
-                      src={product.image} 
-                      alt={product.name}
-                      loading="lazy"
-                      className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500 flex items-center justify-center">
-                      <span className="opacity-0 group-hover:opacity-100 transform translate-y-3 group-hover:translate-y-0 transition-all duration-500 text-white tracking-widest uppercase text-xs sm:text-sm border border-white px-3 sm:px-6 py-1.5 sm:py-3 font-medium">
-                        View
-                      </span>
+              {filteredProducts.map((rawProduct, index) => {
+                const product = translateProduct(rawProduct);
+                return (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 15 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.4, delay: (index % 4) * 0.05 }}
+                    className="group cursor-pointer flex flex-col"
+                    onClick={() => navigateToProduct(product.id)}
+                  >
+                    {/* Image Card with Original View Button */}
+                    <div className="relative aspect-[3/4] overflow-hidden bg-zinc-100 mb-2.5 sm:mb-4">
+                      <img 
+                        src={product.image} 
+                        alt={product.name}
+                        loading="lazy"
+                        className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500 flex items-center justify-center">
+                        <span className="opacity-0 group-hover:opacity-100 transform translate-y-3 group-hover:translate-y-0 transition-all duration-500 text-white tracking-widest uppercase text-xs sm:text-sm border border-white px-3 sm:px-6 py-1.5 sm:py-3 font-medium">
+                          {language === 'bn' ? 'বিস্তারিত' : 'View'}
+                        </span>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Card Title & Price (Optimized for Mobile) */}
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start px-0.5 sm:px-1 gap-1 sm:gap-3">
-                    <h3 className="font-serif text-xs sm:text-base md:text-lg text-zinc-900 group-hover:text-black transition-colors leading-tight line-clamp-2 sm:line-clamp-1">
-                      {product.name}
-                    </h3>
-                    <p className="text-zinc-600 text-xs sm:text-sm font-medium whitespace-nowrap">
-                      {product.price.includes('৳') ? product.price : `৳${product.price}`}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
+                    {/* Card Title & Price (Optimized for Mobile) */}
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start px-0.5 sm:px-1 gap-1 sm:gap-3">
+                      <h3 className="font-serif text-xs sm:text-base md:text-lg text-zinc-900 group-hover:text-black transition-colors leading-tight line-clamp-2 sm:line-clamp-1">
+                        {product.name}
+                      </h3>
+                      <p className="text-zinc-600 text-xs sm:text-sm font-medium whitespace-nowrap">
+                        {product.price}
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           )}
         </main>
@@ -432,7 +440,7 @@ const Collection = () => {
             >
               <div>
                 <div className="flex justify-between items-center mb-6 pb-4 border-b border-zinc-200">
-                  <span className="font-serif text-xl text-zinc-900">Filters</span>
+                  <span className="font-serif text-xl text-zinc-900">{t('collection.filters')}</span>
                   <button 
                     onClick={() => setIsMobileFilterOpen(false)}
                     className="p-1 text-zinc-500 hover:text-black"
@@ -449,7 +457,9 @@ const Collection = () => {
                   onClick={() => setIsMobileFilterOpen(false)}
                   className="w-full bg-black text-white py-3.5 text-xs uppercase tracking-widest font-medium hover:bg-zinc-800 transition-colors"
                 >
-                  Show {filteredProducts.length} Results
+                  {language === 'bn' 
+                    ? `${toBengaliNumber(filteredProducts.length)} টি পণ্য দেখুন` 
+                    : `Show ${filteredProducts.length} Results`}
                 </button>
               </div>
             </motion.div>

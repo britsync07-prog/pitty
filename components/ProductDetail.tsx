@@ -5,8 +5,10 @@ import { WhatsAppIcon, MessengerIcon } from './Icons';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import { PRODUCTS } from '../constants';
+import { useLanguage } from '../context/LanguageContext';
 
 const ProductDetail = ({ id }: { id: string }) => {
+  const { language, t, translateProduct, getOrderMessage, getWhatsappOrderUrl } = useLanguage();
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState('');
@@ -14,10 +16,11 @@ const ProductDetail = ({ id }: { id: string }) => {
   const [showMessengerModal, setShowMessengerModal] = useState(false);
   const [copiedAgain, setCopiedAgain] = useState(false);
 
+  const currentProduct = product ? translateProduct(product) : null;
+
   const getOrderText = () => {
-    if (!product) return '';
-    const price = product.price ? (String(product.price).includes('৳') ? product.price : `৳${product.price}`) : '';
-    return `Hi Pretty Pocket! 🌸\nI would like to order: ${product.name} (${price}).\nPlease share delivery details.`;
+    if (!currentProduct) return '';
+    return getOrderMessage(currentProduct.name, currentProduct.price);
   };
 
   const handleMessengerClick = () => {
@@ -141,32 +144,32 @@ const ProductDetail = ({ id }: { id: string }) => {
               transition={{ duration: 0.6 }}
             >
               <nav className="flex items-center gap-2 text-xs uppercase tracking-widest text-zinc-400 mb-8">
-                <a href="/" className="hover:text-black">Home</a>
+                <a href="/" className="hover:text-black">{t('productDetail.home')}</a>
                 <span>/</span>
-                <span className="text-zinc-900">Collection</span>
+                <span className="text-zinc-900">{t('productDetail.collection')}</span>
               </nav>
 
-              <h1 className="text-4xl md:text-5xl font-serif text-zinc-900 mb-4">{product.name}</h1>
-              <p className="text-2xl text-zinc-600 font-light mb-8">{priceStr}</p>
+              <h1 className="text-4xl md:text-5xl font-serif text-zinc-900 mb-4">{currentProduct.name}</h1>
+              <p className="text-2xl text-zinc-600 font-light mb-8">{currentProduct.price}</p>
               
               <div className="w-full h-[1px] bg-zinc-100 mb-8"></div>
               
               <div className="space-y-6 mb-12">
-                <h3 className="text-xs uppercase tracking-[0.2em] font-bold text-zinc-900">Description</h3>
+                <h3 className="text-xs uppercase tracking-[0.2em] font-bold text-zinc-900">{t('productDetail.description')}</h3>
                 <p className="text-zinc-600 leading-relaxed font-light whitespace-pre-wrap">
-                  {product.description || "No description provided."}
+                  {currentProduct.description || t('productDetail.noDescription')}
                 </p>
               </div>
 
               <div className="flex flex-col gap-3">
                 <a 
-                  href={`https://wa.me/8801314671743?text=${encodeURIComponent(`Hi Pretty Pocket! 🌸\nI would like to order: ${product.name} (${priceStr}).\nPlease share delivery details.`)}`}
+                  href={getWhatsappOrderUrl(currentProduct.name, currentProduct.price)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full bg-black text-white py-4 px-8 flex items-center justify-center gap-3 hover:bg-zinc-800 transition-colors tracking-widest uppercase text-xs sm:text-sm font-medium shadow-sm"
                 >
                   <WhatsAppIcon size={18} />
-                  Order via WhatsApp
+                  {t('productDetail.orderWhatsapp')}
                 </a>
                 <button 
                   type="button"
@@ -174,18 +177,18 @@ const ProductDetail = ({ id }: { id: string }) => {
                   className="w-full border border-black text-black bg-white py-4 px-8 flex items-center justify-center gap-3 hover:bg-black hover:text-white transition-colors tracking-widest uppercase text-xs sm:text-sm font-medium"
                 >
                   <MessengerIcon size={18} />
-                  Order via Messenger
+                  {t('productDetail.orderMessenger')}
                 </button>
               </div>
 
               <div className="mt-16 grid grid-cols-2 gap-8 border-t border-zinc-100 pt-8">
                 <div>
-                  <h4 className="text-[10px] uppercase tracking-widest font-bold mb-2">Delivery</h4>
-                  <p className="text-xs text-zinc-400">Cash on home delivery inside Dhaka and all over Bangladesh.</p>
+                  <h4 className="text-[10px] uppercase tracking-widest font-bold mb-2">{t('productDetail.deliveryTitle')}</h4>
+                  <p className="text-xs text-zinc-400">{t('productDetail.deliveryDesc')}</p>
                 </div>
                 <div>
-                  <h4 className="text-[10px] uppercase tracking-widest font-bold mb-2">Authenticity</h4>
-                  <p className="text-xs text-zinc-400">Quality guaranteed with pocket-friendly pricing.</p>
+                  <h4 className="text-[10px] uppercase tracking-widest font-bold mb-2">{t('productDetail.authTitle')}</h4>
+                  <p className="text-xs text-zinc-400">{t('productDetail.authDesc')}</p>
                 </div>
               </div>
             </motion.div>
@@ -216,9 +219,9 @@ const ProductDetail = ({ id }: { id: string }) => {
                 <Check size={24} />
               </div>
 
-              <h3 className="text-xl font-serif text-center text-zinc-900 mb-2">Order Text Copied!</h3>
+              <h3 className="text-xl font-serif text-center text-zinc-900 mb-2">{t('productDetail.modalTitle')}</h3>
               <p className="text-xs text-zinc-500 text-center mb-5 font-light leading-relaxed">
-                We've copied your order details. Once Messenger opens, simply <strong>Paste</strong> into the chat and send.
+                {t('productDetail.modalDesc')}
               </p>
 
               <div className="bg-zinc-50 border border-zinc-200 p-4 mb-5 text-xs text-zinc-700 whitespace-pre-wrap font-sans leading-relaxed select-all">
@@ -234,7 +237,7 @@ const ProductDetail = ({ id }: { id: string }) => {
                   className="w-full bg-black text-white py-4 px-6 flex items-center justify-center gap-2 hover:bg-zinc-800 transition-colors uppercase tracking-widest text-xs font-semibold text-center"
                 >
                   <MessengerIcon size={18} />
-                  Open Messenger Now
+                  {t('productDetail.modalOpen')}
                 </a>
 
                 <button 
@@ -247,7 +250,7 @@ const ProductDetail = ({ id }: { id: string }) => {
                   className="w-full py-2.5 text-center text-xs text-zinc-500 hover:text-black tracking-wider uppercase font-medium flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <Copy size={13} />
-                  {copiedAgain ? "Copied Again!" : "Copy Text Again"}
+                  {copiedAgain ? t('productDetail.modalCopiedAgain') : t('productDetail.modalCopyAgain')}
                 </button>
               </div>
             </motion.div>

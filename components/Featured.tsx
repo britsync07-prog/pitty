@@ -1,24 +1,27 @@
 import React from 'react';
 import { motion } from 'motion/react';
-
-const features = [
-  {
-    id: 1,
-    title: "Trending Bangles & Jewelry",
-    description: "Handcrafted Kashmiri churi, vibrant jelly bangles, and shimmering jewelry sets designed for everyday glam and festive celebrations.",
-    image: "https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&q=80&w=1200",
-    align: "left"
-  },
-  {
-    id: 2,
-    title: "Curated Bouquets & Beauty",
-    description: "Customized snack bouquets, sweet keepsake combos, and viral cosmetic essentials crafted to deliver happiness at pocket-friendly prices.",
-    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80&w=1200",
-    align: "right"
-  }
-];
+import { useLanguage } from '../context/LanguageContext';
 
 const Featured = () => {
+  const { t } = useLanguage();
+
+  const features = [
+    {
+      id: 1,
+      title: t('featured.f1Title'),
+      description: t('featured.f1Desc'),
+      image: "https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&q=80&w=1200",
+      align: "left"
+    },
+    {
+      id: 2,
+      title: t('featured.f2Title'),
+      description: t('featured.f2Desc'),
+      image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80&w=1200",
+      align: "right"
+    }
+  ];
+
   return (
     <section id="featured" className="py-24 overflow-hidden">
       {features.map((feature) => (
@@ -59,7 +62,7 @@ const Featured = () => {
                 }}
                 className="group relative inline-flex items-center gap-4 text-sm tracking-widest uppercase pb-2 text-zinc-900"
               >
-                <span className="relative z-10 font-medium">Discover</span>
+                <span className="relative z-10 font-medium">{t('featured.discover')}</span>
                 <div className="absolute bottom-0 left-0 w-full h-[1px] bg-zinc-300">
                   <div className="absolute bottom-0 left-0 w-0 h-[1px] bg-black transition-all duration-300 group-hover:w-full"></div>
                 </div>

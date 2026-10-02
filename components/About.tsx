@@ -1,7 +1,10 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { useLanguage } from '../context/LanguageContext';
 
 const About = () => {
+  const { t } = useLanguage();
+
   return (
     <section id="about" className="py-32 px-4 bg-white">
       <div className="max-w-4xl mx-auto text-center">
@@ -11,9 +14,9 @@ const About = () => {
            viewport={{ once: true, margin: "-100px" }}
            transition={{ duration: 1 }}
         >
-          <h2 className="text-sm tracking-[0.3em] text-zinc-400 uppercase mb-8">About Pretty Pocket</h2>
+          <h2 className="text-sm tracking-[0.3em] text-zinc-400 uppercase mb-8">{t('about.label')}</h2>
           <p className="text-3xl md:text-5xl font-serif text-zinc-900 leading-tight md:leading-snug">
-            Your daily dose of glam, without breaking the bank! Quality guaranteed, pocket-friendly prices, and trending collections.
+            {t('about.quote')}
           </p>
         </motion.div>
       </div>

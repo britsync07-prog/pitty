@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Collection from './components/Collection';
@@ -9,7 +10,7 @@ import Footer from './components/Footer';
 import Admin from './components/Admin';
 import ProductDetail from './components/ProductDetail';
 
-function App() {
+function AppContent() {
   const [path, setPath] = useState(window.location.pathname);
 
   useEffect(() => {
@@ -45,6 +46,14 @@ function App() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }
 

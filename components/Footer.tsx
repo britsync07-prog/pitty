@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { useLanguage, toBengaliNumber } from '../context/LanguageContext';
 
 const socials = [
   { 
@@ -34,15 +35,20 @@ const socials = [
 ];
 
 const Footer = () => {
+  const { language, t } = useLanguage();
+
   return (
     <footer className="bg-white py-16 px-4 border-t border-zinc-100">
       <div className="max-w-7xl mx-auto flex flex-col items-center">
         
-        <div className="text-xl font-serif tracking-widest uppercase mb-10 text-zinc-900">
+        <div className="text-xl font-serif tracking-widest uppercase mb-2 text-zinc-900">
           Pretty Pocket
         </div>
+        <p className="text-xs text-zinc-500 font-light mb-8 text-center">
+          {t('footer.motto')}
+        </p>
 
-        <div className="flex gap-6 mb-12 flex-wrap justify-center">
+        <div className="flex gap-6 mb-10 flex-wrap justify-center">
           {socials.map((social) => {
             const Icon = social.icon;
             return (
@@ -61,8 +67,8 @@ const Footer = () => {
           })}
         </div>
 
-        <div className="text-xs text-zinc-400 font-light tracking-wider">
-          &copy; {new Date().getFullYear()} Pretty Pocket. All rights reserved.
+        <div className="text-xs text-zinc-400 font-light tracking-wider text-center">
+          &copy; {language === 'bn' ? toBengaliNumber(new Date().getFullYear()) : new Date().getFullYear()} Pretty Pocket. {t('footer.rights')}
         </div>
       </div>
     </footer>
