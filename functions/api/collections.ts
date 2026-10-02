@@ -22,7 +22,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const auth = context.request.headers.get("Authorization");
-  if (auth !== context.env.ADMIN_PASSWORD) {
+  const expectedPassword = context.env.ADMIN_PASSWORD || "prettypocket2026";
+  if (auth !== expectedPassword) {
     return new Response("Unauthorized", { status: 401 });
   }
 
@@ -50,7 +51,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
 export const onRequestPut: PagesFunction<Env> = async (context) => {
   const auth = context.request.headers.get("Authorization");
-  if (auth !== context.env.ADMIN_PASSWORD) {
+  const expectedPassword = context.env.ADMIN_PASSWORD || "prettypocket2026";
+  if (auth !== expectedPassword) {
     return new Response("Unauthorized", { status: 401 });
   }
 
@@ -82,7 +84,8 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
 
 export const onRequestDelete: PagesFunction<Env> = async (context) => {
     const auth = context.request.headers.get("Authorization");
-    if (auth !== context.env.ADMIN_PASSWORD) {
+    const expectedPassword = context.env.ADMIN_PASSWORD || "prettypocket2026";
+  if (auth !== expectedPassword) {
       return new Response("Unauthorized", { status: 401 });
     }
     const url = new URL(context.request.url);
