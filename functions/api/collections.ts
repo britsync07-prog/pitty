@@ -15,7 +15,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   }
 
   const { results } = await context.env.DB.prepare(
-    "SELECT * FROM collections ORDER BY created_at DESC"
+    "SELECT * FROM collections ORDER BY id ASC"
   ).all();
   return Response.json(results);
 };
@@ -27,7 +27,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   const data: any = await context.request.json();
-  const { name, banglaName, category, price, description, image, images } = data;
+  const { name, category, price, description, image, images } = data;
 
   if (!name || !price || !image) {
     return new Response("Missing required fields", { status: 400 });
@@ -37,10 +37,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   try {
     await context.env.DB.prepare(
-      "INSERT INTO collections (name, banglaName, category, price, description, image, images) VALUES (?, ?, ?, ?, ?, ?, ?)"
-    ).bind(name, banglaName || "", category || "Bangles & Jewelry", price, description || "", image, imagesJson).run();
+      "INSERT INTO collections (name, category, price, description, image, images) VALUES (?, ?, ?, ?, ?, ?)"
+    ).bind(name, category || "Bangles & Jewelry", price, description || "", image, imagesJson).run();
   } catch(e) {
-    // Fallback if older schema without category/banglaName
     await context.env.DB.prepare(
       "INSERT INTO collections (name, price, description, image, images) VALUES (?, ?, ?, ?, ?)"
     ).bind(name, price, description || "", image, imagesJson).run();
@@ -60,7 +59,7 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
   if (!id) return new Response("Missing id", { status: 400 });
 
   const data: any = await context.request.json();
-  const { name, banglaName, category, price, description, image, images } = data;
+  const { name, category, price, description, image, images } = data;
 
   if (!name || !price || !image) {
     return new Response("Missing required fields", { status: 400 });
@@ -70,8 +69,8 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
 
   try {
     await context.env.DB.prepare(
-      "UPDATE collections SET name = ?, banglaName = ?, category = ?, price = ?, description = ?, image = ?, images = ? WHERE id = ?"
-    ).bind(name, banglaName || "", category || "Bangles & Jewelry", price, description || "", image, imagesJson, id).run();
+      "UPDATE collections SET name = ?, category = ?, price = ?, description = ?, image = ?, images = ? WHERE id = ?"
+    ).bind(name, category || "Bangles & Jewelry", price, description || "", image, imagesJson, id).run();
   } catch(e) {
     await context.env.DB.prepare(
       "UPDATE collections SET name = ?, price = ?, description = ?, image = ?, images = ? WHERE id = ?"

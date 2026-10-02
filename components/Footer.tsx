@@ -1,66 +1,48 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Mail, Phone, Heart, Sparkles } from 'lucide-react';
-import { InstagramIcon, FacebookIcon, WhatsAppIcon } from './Icons';
-import { STORE_INFO, LOGO_IMAGE } from '../constants';
 
 const socials = [
   { 
-    name: 'Instagram', 
-    icon: InstagramIcon, 
-    url: STORE_INFO.instagram 
+    name: 'Facebook', 
+    icon: () => (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+      </svg>
+    ), 
+    url: 'https://www.facebook.com/profile.php?id=61591337513485' 
   },
   { 
-    name: 'Facebook', 
-    icon: FacebookIcon, 
-    url: STORE_INFO.facebook 
+    name: 'Instagram', 
+    icon: () => (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+        <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+        <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+      </svg>
+    ), 
+    url: 'https://www.instagram.com/prettypoket' 
   },
   { 
     name: 'WhatsApp', 
-    icon: WhatsAppIcon, 
-    url: `${STORE_INFO.whatsappLink}?text=${encodeURIComponent("Hi Pretty Pocket! I saw your website.")}` 
-  },
-  { 
-    name: 'Email', 
-    icon: Mail, 
-    url: `mailto:${STORE_INFO.email}` 
-  },
-  { 
-    name: 'Phone', 
-    icon: Phone, 
-    url: `tel:${STORE_INFO.phone.replace(/[^0-9+]/g, '')}` 
+    icon: () => (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+      </svg>
+    ), 
+    url: 'https://wa.me/8801314671743' 
   },
 ];
 
 const Footer = () => {
   return (
-    <footer className="bg-white py-16 px-4 sm:px-6 lg:px-8 border-t border-rose-100">
-      <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
+    <footer className="bg-white py-16 px-4 border-t border-zinc-100">
+      <div className="max-w-7xl mx-auto flex flex-col items-center">
         
-        {/* Brand Emblem & Name */}
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-full p-0.5 bg-gradient-to-tr from-amber-400 to-rose-300 shadow-sm">
-            <img 
-              src={LOGO_IMAGE} 
-              alt={STORE_INFO.name} 
-              className="w-full h-full object-cover rounded-full"
-            />
-          </div>
-          <span className="text-2xl font-serif tracking-wider font-semibold text-zinc-900">
-            {STORE_INFO.name}
-          </span>
+        <div className="text-xl font-serif tracking-widest uppercase mb-10 text-zinc-900">
+          Pretty Pocket
         </div>
 
-        <p className="text-xs uppercase tracking-[0.25em] text-rose-500 font-medium mb-3">
-          {STORE_INFO.tagline}
-        </p>
-
-        <p className="text-sm text-zinc-500 font-light max-w-md mb-8">
-          {STORE_INFO.subTagline}
-        </p>
-
-        {/* Social Icons */}
-        <div className="flex gap-4 mb-10 flex-wrap justify-center">
+        <div className="flex gap-6 mb-12 flex-wrap justify-center">
           {socials.map((social) => {
             const Icon = social.icon;
             return (
@@ -69,32 +51,18 @@ const Footer = () => {
                 href={social.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ y: -3, scale: 1.05 }}
-                className="w-10 h-10 rounded-full bg-rose-50 text-rose-700 hover:bg-rose-500 hover:text-white transition-all duration-300 flex items-center justify-center shadow-sm"
+                whileHover={{ y: -3 }}
+                className="text-zinc-400 hover:text-black transition-colors duration-300 p-2"
                 aria-label={social.name}
               >
-                <Icon size={18} />
+                <Icon size={20} className="w-5 h-5" />
               </motion.a>
             );
           })}
         </div>
 
-        {/* Bottom Bar: Copyright & Admin Link */}
-        <div className="pt-8 border-t border-zinc-100 w-full flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400 font-light">
-          <div className="flex items-center gap-1">
-            <span>&copy; {new Date().getFullYear()} {STORE_INFO.name}. Dhaka, Bangladesh. Made with</span>
-            <Heart size={12} className="text-rose-500 fill-rose-500" />
-          </div>
-
-          <div className="flex items-center gap-6">
-            <span>Cash on Home Delivery Nationwide</span>
-            <a 
-              href="/admin" 
-              className="hover:text-zinc-700 transition-colors underline-offset-4 hover:underline"
-            >
-              Merchant Admin
-            </a>
-          </div>
+        <div className="text-xs text-zinc-400 font-light tracking-wider">
+          &copy; {new Date().getFullYear()} Pretty Pocket. All rights reserved.
         </div>
       </div>
     </footer>

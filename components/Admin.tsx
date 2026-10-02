@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Trash2, Plus, LogOut, Loader2, CheckCircle2, Edit3, XCircle, ArrowLeft } from 'lucide-react';
-import { CATEGORIES, STORE_INFO } from '../constants';
+import { Trash2, Plus, LogOut, Loader2, CheckCircle2, Edit3, XCircle } from 'lucide-react';
+import { CATEGORIES } from '../constants';
 
 const Admin = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -13,7 +13,6 @@ const Admin = () => {
   
   const [newItem, setNewItem] = useState({
     name: '',
-    banglaName: '',
     price: '',
     category: 'Bangles & Jewelry',
     description: '',
@@ -75,9 +74,7 @@ const Admin = () => {
     try {
       const res = await fetch('/api/collections');
       const data = await res.json();
-      if (Array.isArray(data)) {
-        setCollections(data);
-      }
+      if (Array.isArray(data)) setCollections(data);
     } catch (err) {
       console.error(err);
     }
@@ -85,7 +82,7 @@ const Admin = () => {
 
   const handleSaveItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newItem.image) return alert("Please upload at least one image or provide an image URL.");
+    if (!newItem.image) return alert("Please upload at least one image.");
     const token = localStorage.getItem('admin_token');
     
     const method = editingId ? 'PUT' : 'POST';
@@ -98,7 +95,7 @@ const Admin = () => {
         body: JSON.stringify(newItem)
       });
       if (res.ok) {
-        setNewItem({ name: '', banglaName: '', price: '', category: 'Bangles & Jewelry', description: '', image: '', images: [] });
+        setNewItem({ name: '', price: '', category: 'Bangles & Jewelry', description: '', image: '', images: [] });
         setEditingId(null);
         fetchCollections();
       }
@@ -115,8 +112,7 @@ const Admin = () => {
     }
     setNewItem({
         name: item.name,
-        banglaName: item.banglaName || '',
-        price: String(item.price).replace(/[^0-9.]/g, ''),
+        price: item.price.replace('৳', ''),
         category: item.category || 'Bangles & Jewelry',
         description: item.description || '',
         image: item.image,
@@ -127,12 +123,12 @@ const Admin = () => {
 
   const cancelEdit = () => {
     setEditingId(null);
-    setNewItem({ name: '', banglaName: '', price: '', category: 'Bangles & Jewelry', description: '', image: '', images: [] });
+    setNewItem({ name: '', price: '', category: 'Bangles & Jewelry', description: '', image: '', images: [] });
   };
 
   const handleDeleteItem = async (id: number) => {
     const token = localStorage.getItem('admin_token');
-    if (!confirm('Are you sure you want to remove this item?')) return;
+    if (!confirm('Are you sure you want to delete this product?')) return;
     try {
       const res = await fetch(`/api/collections?id=${id}`, {
         method: 'DELETE',
@@ -166,29 +162,15 @@ const Admin = () => {
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-rose-50/40 px-4">
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl w-full max-w-md">
-          <div className="text-center mb-6">
-            <span className="text-xs font-bold uppercase tracking-widest text-rose-500">Merchant Portal</span>
-            <h1 className="font-serif text-3xl text-zinc-900 mt-1">Pretty Pocket</h1>
-          </div>
+      <div className="min-h-screen flex items-center justify-center bg-zinc-50 px-4">
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white p-8 border border-zinc-200 w-full max-w-md">
+          <h1 className="font-serif text-2xl mb-6 text-center text-zinc-900">Pretty Pocket Admin</h1>
           <form onSubmit={checkAuth} className="space-y-4">
-            <input 
-              type="password" 
-              placeholder="Admin Password" 
-              className="w-full px-4 py-3 rounded-xl border border-rose-200 focus:outline-none focus:border-rose-500 text-sm" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-            />
-            {error && <p className="text-rose-500 text-xs">{error}</p>}
-            <button disabled={loading} className="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-xl transition-colors flex items-center justify-center font-medium text-sm shadow-md shadow-rose-600/20">
-              {loading ? <Loader2 className="animate-spin" size={18} /> : 'Enter Dashboard'}
+            <input type="password" placeholder="Admin Password" className="w-full px-4 py-3 border border-zinc-200 focus:outline-none focus:border-black" value={password} onChange={(e) => setPassword(e.target.value)} />
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            <button disabled={loading} className="w-full bg-black text-white py-3 hover:bg-zinc-800 transition-colors flex items-center justify-center tracking-wider uppercase text-sm">
+              {loading ? <Loader2 className="animate-spin" /> : 'Enter Dashboard'}
             </button>
-            <div className="text-center pt-2">
-              <a href="/" className="text-xs text-zinc-400 hover:text-zinc-700 transition-colors">
-                ← Return to store website
-              </a>
-            </div>
           </form>
         </motion.div>
       </div>
@@ -196,161 +178,117 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-rose-50/30 p-4 md:p-8">
+    <div className="min-h-screen bg-zinc-50 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
-            <h1 className="font-serif text-3xl text-zinc-900">Pretty Pocket Dashboard</h1>
-            <a href="/" className="text-xs font-semibold text-rose-600 hover:text-rose-800 transition-colors border-l border-zinc-300 pl-4 ml-2 flex items-center gap-1">
-              <ArrowLeft size={14} />
-              <span>View Storefront</span>
-            </a>
+            <h1 className="font-serif text-3xl text-zinc-900">Dashboard</h1>
+            <a href="/" className="text-sm text-zinc-500 hover:text-black transition-colors border-l border-zinc-300 pl-4 ml-2">View Website</a>
           </div>
-          <button onClick={() => { setIsLoggedIn(false); localStorage.removeItem('admin_token'); }} className="flex items-center gap-2 text-xs font-medium text-zinc-500 hover:text-rose-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-white">
-            <LogOut size={16} /> Logout
+          <button onClick={() => { setIsLoggedIn(false); localStorage.removeItem('admin_token'); }} className="flex items-center gap-2 text-zinc-500 hover:text-black transition-colors">
+            <LogOut size={18} /> Logout
           </button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Add / Edit Form */}
           <div className="lg:col-span-1">
-            <div className="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm sticky top-8">
+            <div className="bg-white p-6 border border-zinc-200 sticky top-8">
               <div className="flex justify-between items-center mb-4">
-                  <h2 className="font-serif text-xl text-zinc-900">{editingId ? 'Edit Product' : 'Add New Item'}</h2>
+                  <h2 className="font-serif text-xl">{editingId ? 'Edit Product' : 'Add New Item'}</h2>
                   {editingId && (
                       <button onClick={cancelEdit} className="text-zinc-400 hover:text-black transition-colors">
                           <XCircle size={20} />
                       </button>
                   )}
               </div>
-              <form onSubmit={handleSaveItem} className="space-y-4 text-sm">
-                <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Product Name (English)</label>
-                  <input placeholder="e.g. Jelly Bangles Set" className="w-full px-3.5 py-2 rounded-lg border border-zinc-200 focus:outline-none focus:border-rose-500" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} required />
-                </div>
+              <form onSubmit={handleSaveItem} className="space-y-4">
+                <input placeholder="Item Name" className="w-full px-4 py-2 border border-zinc-200 focus:outline-none focus:border-black" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} required />
+                
+                <select 
+                  className="w-full px-4 py-2 border border-zinc-200 focus:outline-none focus:border-black bg-white text-zinc-800"
+                  value={newItem.category}
+                  onChange={e => setNewItem({...newItem, category: e.target.value})}
+                >
+                  {CATEGORIES.filter(c => c !== 'All').map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
 
-                <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Bangla Name (Optional)</label>
-                  <input placeholder="e.g. পার্পল ও গ্রিন জেলি চুড়ি" className="w-full px-3.5 py-2 rounded-lg border border-zinc-200 focus:outline-none focus:border-rose-500" value={newItem.banglaName} onChange={e => setNewItem({...newItem, banglaName: e.target.value})} />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Category</label>
-                  <select 
-                    value={newItem.category} 
-                    onChange={e => setNewItem({...newItem, category: e.target.value})}
-                    className="w-full px-3.5 py-2 rounded-lg border border-zinc-200 focus:outline-none focus:border-rose-500 bg-white"
-                  >
-                    {CATEGORIES.filter(c => c !== 'All Products').map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Price (in Taka)</label>
-                  <div className="relative">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 font-bold">৳</span>
-                    <input placeholder="e.g. 220" className="w-full pl-8 pr-4 py-2 rounded-lg border border-zinc-200 focus:outline-none focus:border-rose-500" value={newItem.price} onChange={e => { const val = e.target.value.replace(/[^0-9.]/g, ''); setNewItem({...newItem, price: val}); }} required />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Image URL</label>
-                  <input placeholder="https://..." className="w-full px-3.5 py-2 rounded-lg border border-zinc-200 focus:outline-none focus:border-rose-500 text-xs" value={newItem.image} onChange={e => setNewItem({...newItem, image: e.target.value})} />
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-medium text-sm">৳</span>
+                  <input placeholder="Price (e.g. 250)" className="w-full pl-8 pr-4 py-2 border border-zinc-200 focus:outline-none focus:border-black" value={newItem.price} onChange={e => { const val = e.target.value.replace(/[^0-9.]/g, ''); setNewItem({...newItem, price: val}); }} required />
                 </div>
                 
                 <div className="space-y-2">
-                    <label className="block text-xs uppercase tracking-wider text-zinc-400 font-medium">Or Upload Photo</label>
+                    <label className="block text-xs uppercase tracking-wider text-zinc-500 font-medium">Gallery (Primary = Black Border)</label>
                     <div className="grid grid-cols-3 gap-2 mb-2">
                         {newItem.images.map((url, i) => (
-                            <div key={i} className="relative aspect-square group rounded-lg overflow-hidden">
-                                <img src={url} className={`w-full h-full object-cover border-2 ${newItem.image === url ? 'border-rose-500' : 'border-transparent'}`} />
+                            <div key={i} className="relative aspect-square group">
+                                <img src={url} className={`w-full h-full object-cover border-2 ${newItem.image === url ? 'border-black' : 'border-transparent'}`} />
                                 <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity gap-2">
                                     <button type="button" onClick={() => setNewItem({...newItem, image: url})} className="text-[10px] text-white uppercase font-bold hover:underline">Front</button>
-                                    <button type="button" onClick={() => removeImage(url)} className="text-[10px] text-red-300 uppercase font-bold hover:underline">Delete</button>
+                                    <button type="button" onClick={() => removeImage(url)} className="text-[10px] text-red-400 uppercase font-bold hover:underline">Delete</button>
                                 </div>
                                 {newItem.image === url && (
-                                    <div className="absolute top-1 right-1 bg-rose-600 text-white p-0.5 rounded-full shadow">
-                                        <CheckCircle2 size={12} />
+                                    <div className="absolute top-1 right-1 bg-black text-white p-0.5 rounded-full shadow-lg">
+                                        <CheckCircle2 size={10} />
                                     </div>
                                 )}
                             </div>
                         ))}
-                        <div className="relative aspect-square rounded-lg border-2 border-dashed border-rose-200 flex items-center justify-center hover:border-rose-400 transition-colors cursor-pointer bg-rose-50/30">
+                        <div className="relative aspect-square border-2 border-dashed border-zinc-200 flex items-center justify-center hover:border-black transition-colors cursor-pointer">
                             <input type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                            {uploading ? <Loader2 size={16} className="animate-spin text-rose-600" /> : <Plus size={16} className="text-rose-400" />}
+                            {uploading ? <Loader2 size={16} className="animate-spin text-zinc-900" /> : <Plus size={16} className="text-zinc-400" />}
                         </div>
                     </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Description</label>
-                  <textarea placeholder="Product description, size details, colors..." className="w-full px-3.5 py-2 rounded-lg border border-zinc-200 focus:outline-none focus:border-rose-500 h-28 text-xs leading-relaxed" value={newItem.description} onChange={e => setNewItem({...newItem, description: e.target.value})} />
-                </div>
-
-                <button disabled={uploading || !newItem.image} className="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-xl transition-colors flex items-center justify-center gap-2 font-semibold text-xs uppercase tracking-wider disabled:bg-zinc-300 shadow-md shadow-rose-600/20">
-                  {editingId ? <Edit3 size={16} /> : <Plus size={16} />} 
-                  {uploading ? 'Uploading...' : (editingId ? 'Update Product' : 'Save Product')}
+                <textarea placeholder="Description" className="w-full px-4 py-2 border border-zinc-200 focus:outline-none focus:border-black h-32 text-sm leading-relaxed" value={newItem.description} onChange={e => setNewItem({...newItem, description: e.target.value})} />
+                <button disabled={uploading || !newItem.image} className="w-full bg-black text-white py-3 hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2 disabled:bg-zinc-300 tracking-wider uppercase text-sm font-medium">
+                  {editingId ? <Edit3 size={18} /> : <Plus size={18} />} 
+                  {uploading ? 'Uploading...' : (editingId ? 'Update Product' : 'Add Product')}
                 </button>
               </form>
             </div>
           </div>
 
-          {/* Catalog Table */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl border border-rose-100 shadow-sm overflow-hidden">
-                <div className="p-4 border-b border-zinc-100 flex justify-between items-center">
-                  <h3 className="font-serif text-lg text-zinc-900">Store Catalog</h3>
-                  <span className="text-xs text-zinc-400">{collections.length} items registered</span>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                      <thead className="bg-rose-50/40 border-b border-zinc-100 text-xs uppercase tracking-wider text-zinc-500">
-                          <tr>
-                              <th className="px-6 py-3.5 font-medium">Item</th>
-                              <th className="px-6 py-3.5 font-medium">Category</th>
-                              <th className="px-6 py-3.5 font-medium">Price</th>
-                              <th className="px-6 py-3.5 font-medium text-right pr-8">Actions</th>
-                          </tr>
-                      </thead>
-                      <tbody className="divide-y divide-zinc-100">
-                          {collections.length === 0 ? (
-                            <tr>
-                              <td colSpan={4} className="px-6 py-12 text-center text-zinc-400 text-xs">
-                                No custom items in database yet. The website is currently displaying the full default catalog seeded in constants.ts. Add custom items here anytime!
-                              </td>
+            <div className="bg-white border border-zinc-200 overflow-hidden">
+                <table className="w-full text-left">
+                    <thead className="bg-zinc-50 border-b border-zinc-200 text-xs uppercase tracking-wider text-zinc-500">
+                        <tr>
+                            <th className="px-6 py-4 font-medium">Item</th>
+                            <th className="px-6 py-4 font-medium">Price</th>
+                            <th className="px-6 py-4 font-medium text-right pr-12">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-zinc-200">
+                        {collections.map(item => (
+                            <tr key={item.id} className={`hover:bg-zinc-50/50 transition-colors ${editingId === item.id ? 'bg-zinc-100/50' : ''}`}>
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center gap-4">
+                                        <img src={item.image} className="w-12 h-16 object-cover bg-zinc-100" />
+                                        <div className="flex flex-col">
+                                            <span className="font-medium text-zinc-900">{item.name}</span>
+                                            <span className="text-[10px] text-zinc-400 uppercase tracking-tighter">{item.category || 'Product'} • ID: {item.id}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 text-zinc-600 font-medium">৳{String(item.price).replace(/[^0-9.]/g, '')}</td>
+                                <td className="px-6 py-4 text-right pr-12">
+                                    <div className="flex items-center justify-end gap-3">
+                                        <button onClick={() => startEdit(item)} className="text-zinc-400 hover:text-black transition-colors" aria-label="Edit">
+                                            <Edit3 size={18} />
+                                        </button>
+                                        <button onClick={() => handleDeleteItem(item.id)} className="text-zinc-300 hover:text-red-500 transition-colors" aria-label="Delete">
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
-                          ) : (
-                            collections.map(item => (
-                              <tr key={item.id} className={`hover:bg-rose-50/30 transition-colors ${editingId === item.id ? 'bg-rose-50/50' : ''}`}>
-                                  <td className="px-6 py-4">
-                                      <div className="flex items-center gap-3">
-                                          <img src={item.image} className="w-12 h-12 object-cover rounded-lg bg-rose-50 border border-rose-100" />
-                                          <div className="flex flex-col">
-                                              <span className="font-medium text-zinc-900">{item.name}</span>
-                                              <span className="text-[10px] text-zinc-400">ID: {item.id}</span>
-                                          </div>
-                                      </div>
-                                  </td>
-                                  <td className="px-6 py-4 text-xs text-zinc-500 font-light">{item.category || 'Bangles & Jewelry'}</td>
-                                  <td className="px-6 py-4 text-rose-600 font-bold font-serif">৳{String(item.price).replace(/[^0-9.]/g, '')}</td>
-                                  <td className="px-6 py-4 text-right pr-8">
-                                      <div className="flex items-center justify-end gap-2">
-                                          <button onClick={() => startEdit(item)} className="p-1.5 rounded-lg text-zinc-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Edit">
-                                              <Edit3 size={16} />
-                                          </button>
-                                          <button onClick={() => handleDeleteItem(item.id)} className="p-1.5 rounded-lg text-zinc-300 hover:text-red-500 hover:bg-red-50 transition-colors" title="Delete">
-                                              <Trash2 size={16} />
-                                          </button>
-                                      </div>
-                                  </td>
-                              </tr>
-                            ))
-                          )}
-                      </tbody>
-                  </table>
-                </div>
+                        ))}
+                    </tbody>
+                </table>
             </div>
           </div>
         </div>

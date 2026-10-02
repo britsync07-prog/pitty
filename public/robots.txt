@@ -1,10 +1,10 @@
-# Robots.txt for Pretty Pocket (https://prettypocket.pages.dev)
+# Robots.txt for Pretty Pocket (https://pretty-pocket.pages.dev)
 User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
 
-# AI Search Engines & Crawlers (ChatGPT Search, Claude, Perplexity, Google Gemini)
+# AI Search Engines & Crawlers
 User-agent: GPTBot
 Allow: /
 
@@ -20,4 +20,4 @@ Allow: /
 User-agent: Applebot
 Allow: /
 
-Sitemap: https://prettypocket.pages.dev/sitemap.xml
+Sitemap: https://pretty-pocket.pages.dev/sitemap.xml
